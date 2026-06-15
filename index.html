@@ -426,15 +426,6 @@ function closeCity(){
   overlay.classList.remove('open'); 
 }
 
-// X 버튼 클릭 시 창 닫기
-const closeBtn = document.querySelector('.close');
-if(closeBtn) {
-  closeBtn.addEventListener('click', function(e){
-    e.stopPropagation();
-    closeCity();
-  });
-}
-
 // 오버레이 배경 클릭 시 창 닫기
 overlay.addEventListener('click', function(e){
   if(e.target === overlay) {
@@ -448,6 +439,24 @@ document.addEventListener('keydown', function(e){
     closeCity();
   }
 });
+
+// panel 내용 업데이트 후 이벤트 리스너 재등록
+function setupCloseButton(){
+  const closeBtn = document.querySelector('.close');
+  if(closeBtn) {
+    closeBtn.onclick = function(e){
+      e.stopPropagation();
+      closeCity();
+    };
+  }
+}
+
+// openCity 함수 수정 - X 버튼이 생성된 후 이벤트 등록
+const originalOpenCity = openCity;
+openCity = function(c){
+  originalOpenCity(c);
+  setupCloseButton();
+};
 
 document.getElementById('resetBtn').onclick=()=>{
   if(confirm('진행 상황을 모두 초기화할까요?')){ done=new Set(); saveProgress(); renderMap(); }
@@ -468,8 +477,9 @@ function celebrate(){
   }
 }
 
-// 배경 이미지 주입
-document.getElementById('mapImg').src = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwQDAwQEBAQFBQQFBwsHBwYGBw4KCggLEA4RERAOEA8SFBoWEhMYEw8QFh8XGBsbHR0dERYgIh8cIhocHRz/2wBDAQUFBQc[...]
+// 배경 이미지 설정 - 간단한 그라디언트로 변경
+document.getElementById('mapImg').src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 897'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%231a1850;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23070716;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='897' fill='url(%23grad)'/%3E%3C/svg%3E";
+
 renderMap();
 </script>
 </body>
